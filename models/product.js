@@ -28,25 +28,4 @@ const productSchema = new Schema({
     }
 });
 
-productSchema.statics.deleteProduct = function (productId, userId, callback, errCall) {
-    this.deleteOne({_id: productId, userId: userId})
-    .then(() => {
-        return User.find({
-            "cart.items.productId": productId
-        })
-    })
-    .then(users => {
-        users.forEach(user => {
-            user.removeFromCart(productId)
-        });
-        callback();
-    })
-    .catch(err => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        error.iwMsg = 'תקלה בקבלת מוצרים מהשרת.';
-        errCall(error);
-    });
-}
-
 module.exports = mongoose.model('Product', productSchema);
