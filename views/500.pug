@@ -1,0 +1,16 @@
+extend layouts/main-layout
+
+block content
+    .centered
+        h1 אירעה תקלה בשרת :/
+        .code 
+            b פרטי התקלה: 
+            <br> #{error.iwMsg}
+        p לא הצלחנו לבצע את בקשתך.<br/>אנו מתנצלים על חוסר הנוחות.
+        br
+        b אנו פועלים לתיקון מהיר של התקלה.
+        br
+        br
+        p פרטים מלאים:
+            br
+            .code #{error.message}

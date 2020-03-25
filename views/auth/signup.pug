@@ -1,0 +1,26 @@
+extends ../layouts/main-layout
+
+block styles
+    link(rel="stylesheet", href="/css/forms.css")
+    link(rel="stylesheet", href="/css/auth.css")
+
+block scripts
+    script(defer, src="/js/jquery-validate.min.js", type="text/javascript")
+    script(defer, src="/js/signup-validation.js", type="text/javascript")
+
+block content
+    if errorMsg
+        .user-message.user-message__error #{errorMsg}
+    form.login-form(action="/signup", method="post")
+        input(type="hidden", name="_csrf", value=csrfToken)
+        .form-control
+            label(for="email") כתובת אימייל
+            input#email(type="email", name="email", value=input.email, class={invalid: validationErrors.find(e => e.param === 'email')})
+        .form-control
+            label(for="password") סיסמה
+            input#password(type="password", name="password", value=input.password, class={invalid: validationErrors.find(e => e.param === 'password')})
+        .form-control
+            label(for="confirmPassword") אימות סיסמה
+            input#confirmPassword(type="password", name="confirmPassword", value=input.confirmPassword, class={invalid: validationErrors.find(e => e.param === 'confirmPassword')})
+        .centered
+            button.btn(type="submit") הרשמה

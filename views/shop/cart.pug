@@ -1,0 +1,22 @@
+extend ../layouts/main-layout
+block styles
+    link(rel="stylesheet", href="/css/cart.css")
+
+block content
+    if products.length > 0
+        ul.cart__item-list
+            each p in products
+                li.cart__item.card
+                    h1 #{p.productId.title}
+                    h2 כמות: #{p.quantity} 
+                    form(action="/cart-delete-item", method="post")
+                        input(type="hidden", name="_csrf", value=csrfToken)
+                        input(type="hidden", name="productId", value=p.productId._id)
+                        button.btn.danger(type="submit") הסר מהעגלה
+        hr
+        .centered
+            form(action="/create-order", method="post")
+                input(type="hidden", name="_csrf", value=csrfToken)
+                button.btn(type="submit") בצע הזמנה!
+    else
+        h1 עגלת הקניות ריקה!

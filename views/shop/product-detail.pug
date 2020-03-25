@@ -1,0 +1,11 @@
+extend ../layouts/main-layout
+
+block content
+    .centered
+        h1 #{product.title}
+        hr
+        .image
+            img(src=product.imageUrl, alt=product.title)
+        h2 $#{product.price}
+        p #{product.description}
+        include ../includes/add-to-cart

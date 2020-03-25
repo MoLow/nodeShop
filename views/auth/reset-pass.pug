@@ -1,0 +1,22 @@
+extends ../layouts/main-layout
+
+block styles
+    link(rel="stylesheet", href="/css/forms.css")
+    link(rel="stylesheet", href="/css/auth.css")
+
+block scripts
+    script(defer, src="/js/jquery-validate.min.js", type="text/javascript")
+    script(defer, src="/js/reset-validation.js", type="text/javascript")
+
+block content
+    if errorMsg
+        .user-message.user-message__error #{errorMsg}
+    if successMsg
+        .user-message #{successMsg}
+    form.login-form(action="/reset", method="post")
+        input(type="hidden", name="_csrf", value=csrfToken)
+        .form-control
+            label(for="email") כתובת אימייל
+            input#email(type="email", name="email",value=input.email, class={invalid: validationErrors.find(e => e.param === 'email')})
+        .centered
+            button.btn(type="submit") אפס סיסמה

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+html(dir="rtl",lang="iw")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+        title ספרייה - #{title}
+        link(rel="stylesheet", href="/css/main.css")
+        block styles
+        script(defer, src="/js/jquery.min.js", type="text/javascript")
+        script(defer, src="/js/main.js", type="text/javascript")
+        block scripts
+        link(rel="icon", href="/favicon.ico", type="image/x-icon")
+    body
+        .backdrop
+        header.main-header
+            button#side-menu-toggle תפריט
+            nav.main-header__nav
+                ul.main-header__item-list
+                    li.main-header__item
+                        a(class={active: currentPage === 'home'}, href="/") חנות
+                    li.main-header__item
+                        a(class={active: currentPage === 'products'}, href="/products") מוצרים
+                    if isAuthenticated
+                        li.main-header__item
+                            a(class={active: currentPage === 'cart'}, href="/cart") עגלת קניות
+                        li.main-header__item
+                            a(class={active: currentPage === 'orders'}, href="/orders") הזמנות
+                        li.main-header__item
+                            a(class={active: currentPage === 'admin/add-product'}, href="/admin/add-product") הוספת פריט
+                        li.main-header__item
+                            a(class={active: currentPage === 'admin/products'}, href="/admin/products") ניהול פריטים
+                ul.main-header__item-list
+                    if !isAuthenticated
+                        li.main-header__item
+                            a(class={active: currentPage === '/login'}, href="/login") התחבר
+                        li.main-header__item
+                            a(class={active: currentPage === '/signup'}, href="/signup") הרשם
+                    else
+                        li.main-header__item
+                            form(action="/logout", method="post")
+                                input(type="hidden", name="_csrf", value=csrfToken)
+                                button(type="submit") התנתק
+            nav.mobile-nav
+                ul.mobile-nav__item-list
+                    li.mobile-nav__item
+                        a(class={active: currentPage === 'home'}, href="/") חנות
+                    li.mobile-nav__item
+                        a(class={active: currentPage === 'products'}, href="/products") מוצרים
+                    if isAuthenticated
+                        li.mobile-nav__item
+                            a(class={active: currentPage === 'cart'}, href="/cart") עגלת קניות
+                        li.mobile-nav__item
+                            a(class={active: currentPage === 'orders'}, href="/orders") הזמנות
+                        li.mobile-nav__item
+                            a(class={active: currentPage === 'admin/add-product'}, href="/admin/add-product") הוספת פריט
+                        li.mobile-nav__item
+                            a(class={active: currentPage === 'admin/products'}, href="/admin/products") ניהול פריטים
+                        li.mobile-nav__item
+                            form(action="/logout", method="post")
+                                input(type="hidden", name="_csrf", value=csrfToken)
+                                button(type="submit") התנתק
+                    else
+                        li.mobile-nav__item
+                            a(class={active: currentPage === '/login'}, href="/login") התחבר
+                        li.mobile-nav__item
+                            a(class={active: currentPage === '/signup'}, href="/signup") הרשם
+        main
+            block content

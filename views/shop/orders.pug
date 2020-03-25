@@ -1,0 +1,17 @@
+extend ../layouts/main-layout
+
+block styles
+    link(rel="stylesheet", href="/css/orders.css")
+
+block content
+    if orders.length > 0
+        ul.orders
+            each order in orders
+                li.orders__item.card
+                    h1 הזמנה מס' - ##{order._id}
+                    ul.orders__products
+                        each p in order.products
+                            li.orders__products-item #{p.product.title} (#{p.quantity}) - 
+                                a(href="/orders/" + order._id) קבלה
+    else
+        h1 לא נמצאו הזמנות!

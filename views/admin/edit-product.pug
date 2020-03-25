@@ -1,0 +1,33 @@
+extend ../layouts/main-layout
+
+append styles
+    link(rel="stylesheet", href="/css/forms.css")
+    
+block scripts
+    script(defer, src="/js/jquery-validate.min.js", type="text/javascript")
+    script(defer, src="/js/product-validation.js", type="text/javascript")
+
+block content
+    if errorMsg
+        each error in errorMsg
+            .user-message.user-message__error #{error.msg}
+    form(action="/admin/" + (editing ? 'edit-product' : 'add-product'), enctype="multipart/form-data", method="POST", class="product-form")
+        input(type="hidden", name="_csrf", value=csrfToken)
+        if editing && product
+            input(type="hidden", name="productId", value=product._id)
+        .form-control
+            label(for="title") שם מוצר
+            input#title(type="text", name="title", placeholder="שם מוצר", class={invalid: errorMsg.find(e => e.param === 'title')}, value=((editing || hasError) && product ? product.title : ''))
+        //- .form-control
+        //-     label(for="imageUrl") קישור לתמונה
+        //-     input#imageUrl(type="text", name="imageUrl", class={invalid: errorMsg.find(e => e.param === 'imageUrl')}, placeholder="https://via.placeholder.com/150/000/FFF", value=((editing || hasError) && product ? product.imageUrl : ''))
+        .form-control
+            label(for="image") תמונה
+            input#image(type="file", name="image")
+        .form-control
+            label(for="price") מחיר
+            input#price(type="number", name="price", placeholder="מחיר", min="0.01", step="0.01", class={invalid: errorMsg.find(e => e.param === 'price')}, value=((editing || hasError) && product ? product.price : ''))
+        .form-control
+            label(for="description") תיאור
+            textarea#description(rows="5", type="text", name="description", placeholder="תיאור", class={invalid: errorMsg.find(e => e.param === 'description')}) #{(editing || hasError) && product ? product.description : ''}
+        button.btn(type="submit") #{editing ? 'שמור' : 'הוסף'}
