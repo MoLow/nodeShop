@@ -101,7 +101,7 @@ app.use((error, req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
 .then(result => {
     app.listen(port, function() {
         //console.log(`Our app is running on ${this.address().port}`, app.settings.env+ port);

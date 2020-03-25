@@ -145,33 +145,42 @@ exports.getInvoice = (req, res, next) => {
             return next(error);
         }
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);//attachment
-        const pdfDoc = new PDFDocument();
-        pdfDoc.pipe(fs.createWriteStream(invoicePath));
-        pdfDoc.pipe(res);
-        pdfDoc.registerFont('Heebo', path.join('public', 'fonts', 'Heebo-Regular.ttf'));
-        pdfDoc.registerFont('HeeboBold', path.join('public', 'fonts', 'Heebo-Black.ttf'));
-        pdfDoc.fontSize(23).font('HeeboBold').text(`${orderId} - מספר  קבלה`, { align: 'center', underline: true });
-        pdfDoc.font('Heebo').text('\n\n-----------------------\n\n\n', { align: 'center' });
-        let totalPrice = 0;
-        let product;
-        let productPrice;
-        const table = {
-            headers: ['סה"כ', 'ליחידה  מחיר', 'כמות', 'פריט'],
-            rows:[]
-        }
-        order.products.forEach(prodOrder => {
-            product = prodOrder.product;
-            productPrice = product.price * prodOrder.quantity;
-            totalPrice += productPrice;
-            table.rows.push([productPrice, product.price, prodOrder.quantity, product.title]);
+        res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"`);//inline
+        fs.access(invoicePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                const pdfDoc = new PDFDocument();
+                pdfDoc.pipe(fs.createWriteStream(invoicePath));
+                pdfDoc.pipe(res);
+                pdfDoc.registerFont('Heebo', path.join('public', 'fonts', 'Heebo-Regular.ttf'));
+                pdfDoc.registerFont('HeeboBold', path.join('public', 'fonts', 'Heebo-Black.ttf'));
+                pdfDoc.fontSize(23).font('HeeboBold').text(`${orderId} - מספר  קבלה`, { align: 'center', underline: true });
+                pdfDoc.font('Heebo').text('\n\n-----------------------\n\n\n', { align: 'center' });
+                let totalPrice = 0;
+                let product;
+                let productPrice;
+                const table = {
+                    headers: ['סה"כ', 'ליחידה  מחיר', 'כמות', 'פריט'],
+                    rows:[]
+                }
+                order.products.forEach(prodOrder => {
+                    product = prodOrder.product;
+                    productPrice = product.price * prodOrder.quantity;
+                    totalPrice += productPrice;
+                    table.rows.push([productPrice, product.price, prodOrder.quantity, product.title]);
+                });
+                pdfDoc.table(table, {
+                    prepareHeader: () => pdfDoc.fontSize(19),
+                    prepareRow: (row, i) => pdfDoc.fontSize(16)
+                });
+                pdfDoc.fontSize(16).text(`\n\n: הכל  סך\n$${totalPrice}`, {align:'right'});
+                pdfDoc.end();
+            } else {
+                const file = fs.createReadStream(invoicePath);
+                file.pipe(res);
+            }
         });
-        pdfDoc.table(table, {
-            prepareHeader: () => pdfDoc.fontSize(19),
-            prepareRow: (row, i) => pdfDoc.fontSize(16)
-        });
-        pdfDoc.fontSize(16).text(`\n\n: הכל  סך\n$${totalPrice}`, {align:'right'});
-        pdfDoc.end();
+        
+        
     })
     .catch(err => {
         const error = new Error(err);

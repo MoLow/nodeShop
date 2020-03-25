@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 
 const Product = require('../models/product');
+const User = require('../models/user');
+const fileHelper = require('../util/file');
 
 exports.getAddProduct = (req, res, _next) => {
     res.render('admin/edit-product', {
@@ -134,6 +136,7 @@ exports.postEditProduct = (req, res, next) => {
         product.price = price;
         product.description = description;
         if(image) {
+            fileHelper.deleteFile(product.imageUrl);
             product.imageUrl = '/images/' + image.filename;
         }
         return product.save()
@@ -151,9 +154,30 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const productId = req.body.productId;
-    Product.deleteProduct(productId, req.user._id, () => {
+    Product.findOneAndRemove({_id: productId, userId: req.user._id})
+    .then(product => {
+        if(!product) {
+            const error = new Error("Error: no such product exists!");
+            throw error;
+        }
+        fileHelper.deleteFile(product.imageUrl);
+        return User.find({ "cart.items.productId": productId });
+    })
+    .then(users => {
+        users.forEach(user => {
+            user.removeFromCart(productId)
+        });
         res.redirect('/admin/products');
-    }, (err => {
-        return next(err);
-    }))
+    })
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה במחיקת מוצרים מהשרת.';
+        return next(err)
+    });
+    // Product.deleteProduct(productId, req.user._id, () => {
+    //     res.redirect('/admin/products');
+    // }, (err => {
+    //     return next(err);
+    // }))
 }

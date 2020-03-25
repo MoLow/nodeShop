@@ -8,10 +8,10 @@ block content
         ul.orders
             each order in orders
                 li.orders__item.card
-                    h1 הזמנה מס' - ##{order._id}
+                    h1 הזמנה מס' - ##{order._id} - 
+                        a(href="/orders/" + order._id) קבלה
                     ul.orders__products
                         each p in order.products
-                            li.orders__products-item #{p.product.title} (#{p.quantity}) - 
-                                a(href="/orders/" + order._id) קבלה
+                            li.orders__products-item #{p.product.title} (#{p.quantity})
     else
         h1 לא נמצאו הזמנות!
