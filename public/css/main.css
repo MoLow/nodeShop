@@ -278,6 +278,35 @@ main {
     text-align: center;
 }
 
+.pagination {
+    margin-top: 2rem;
+    text-align: center;
+    direction: ltr;
+}
+
+.pagination a {
+    text-decoration: none;
+    border-radius: 8px;
+    color: #0846c2;
+    padding: 0.5rem 0.8rem;
+    border: #0846c2 1px solid;
+    margin: 0 1rem;
+    transition: color .9s, background-color .9s;
+}
+
+.pagination a.more {
+    pointer-events: fill;
+    cursor: pointer;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+    color: white;
+    background-color: #0846c2;
+    border: white 1px solid;
+}
+
 @media (min-width: 768px) {
     .main-header__nav {
         display: flex;

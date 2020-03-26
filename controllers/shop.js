@@ -6,17 +6,36 @@ const PDFDocument = require('../util/pdfkit-tables');
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+const ITEMS_PER_PAGE = 1;
+
 exports.getIndex = (req, res, _next) => {
-    Product.find()
+    const page = +req.query.p || 1;
+    let totalProducts;
+    Product.find().countDocuments()
+    .then(prodCount => {
+        totalProducts = prodCount;
+        return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then(products => {
         res.render('shop/index', {
             prods: products,
             title: 'עמוד הבית',
             currentPage: 'home',
+            hasNextPage: ITEMS_PER_PAGE * page < totalProducts,
+            hasPrevPage: page > 1,
+            currPage: page,
+            nextPage: page + 1,
+            prevPage: page - 1,
+            lastPage: Math.ceil(totalProducts / ITEMS_PER_PAGE),
         })
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בגישה לבסיס המידע!';
+        return next(error);
     });
 };
 
@@ -30,7 +49,10 @@ exports.getProducts = (req, res, _next) => {
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בגישה לבסיס המידע!';
+        return next(error);
     });
 };
 
@@ -38,8 +60,9 @@ exports.getProductDetails = (req, res, next) => {
     const prodId = req.params.productId;
     Product.findById(prodId)
     .then(product => {
-        if(!product)
-        return next();
+        if(!product){
+            return next();
+        }
         res.render('shop/product-detail', {
             product: product,
             title: product.title,
@@ -47,7 +70,10 @@ exports.getProductDetails = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'אירעה שגיאה בניסיון לקבל מידע על מוצר זה!';
+        return next(error);
     });
 };
 
@@ -62,7 +88,10 @@ exports.getCart = (req, res, _next) => {
             currentPage:'cart',
         })
     }).catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בגישה לבסיס המידע!';
+        return next(error);
     })
 };
 
@@ -75,7 +104,10 @@ exports.postCart = (req, res, _next) => {
         res.redirect('/cart');
     })
     .catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'אירעה תקלה בהוספה לעגלת הקניות!';
+        return next(error);
     })
 };
 
@@ -86,7 +118,10 @@ exports.postCartDeleteProduct = (req, res, _next) => {
         res.redirect('/cart');
     })
     .catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'אירעה תקלה במחיקת מוצר מהעגלה!';
+        return next(error);
     })
 };
 
@@ -100,7 +135,10 @@ exports.getOrders = (req, res, _next) => {
         })
     })
     .catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בגישה לבסיס המידע!';
+        return next(error);
     })
 };
 
@@ -128,7 +166,10 @@ exports.postOrder = (req, res, next) => {
         res.redirect('/orders');
     })
     .catch(err => {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בביצוע הזמנה! אנא נסה שנית.';
+        return next(error);
     })
 }
 

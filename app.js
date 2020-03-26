@@ -45,7 +45,7 @@ const auth = require('./routes/auth');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter, limits: { fileSize: 4 * 1024 * 1024 /*4MB*/ } }).single('image'));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter, limits: { fileSize: 5 * 1024 * 1024 /*4MB*/ } }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
     session({
