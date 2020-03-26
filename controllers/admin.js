@@ -168,8 +168,8 @@ exports.postEditProduct = (req, res, next) => {
     })
 }
 
-exports.postDeleteProduct = (req, res, next) => {
-    const productId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+    const productId = req.params.productId;
     Product.findOneAndRemove({_id: productId, userId: req.user._id})
     .then(product => {
         if(!product) {
@@ -183,17 +183,13 @@ exports.postDeleteProduct = (req, res, next) => {
         users.forEach(user => {
             user.removeFromCart(productId)
         });
-        res.redirect('/admin/products');
+        res.status(200).json({msg: 'נמחק בהצלחה'});
     })
     .catch(err => {
+        res.status(500).json({msg:'תקלה במחיקת מוצרים מהשרת.', error: err});
         const error = new Error(err);
         error.httpStatusCode = 500;
-        error.iwMsg = 'תקלה במחיקת מוצרים מהשרת.';
+        error.iwMsg = '';
         return next(err)
     });
-    // Product.deleteProduct(productId, req.user._id, () => {
-    //     res.redirect('/admin/products');
-    // }, (err => {
-    //     return next(err);
-    // }))
 }

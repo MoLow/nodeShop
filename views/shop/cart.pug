@@ -15,8 +15,9 @@ block content
                         button.btn.danger(type="submit") הסר מהעגלה
         hr
         .centered
-            form(action="/create-order", method="post")
-                input(type="hidden", name="_csrf", value=csrfToken)
-                button.btn(type="submit") בצע הזמנה!
+            //- form(action="/create-order", method="post")
+            //-     input(type="hidden", name="_csrf", value=csrfToken)
+            //-     button.btn(type="submit") בצע הזמנה!
+            a.btn(href="/checkout") התקדם לתשלום
     else
         h1 עגלת הקניות ריקה!

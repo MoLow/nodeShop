@@ -1,3 +1,21 @@
 extend ../layouts/main-layout
 
+block styles
+    link(rel="stylesheet", href="/css/cart.css")
+
+block scripts
+    script(defer,src="https://js.stripe.com/v3/")
+    script(defer,src="/js/checkout.js")
+
 block content
+    ul.cart__item-list
+        each p in products
+            li.cart__item.card
+                h1 #{p.productId.title}
+                h2 מחיר: #{p.productId.price}
+                h2 כמות: #{p.quantity}
+    .centered
+        h2 סך הכל: #{totalPrice}
+    .centered
+        input#sessionId(type="hidden", name="sessionId", value=sessionId)
+        button.btn#order-btn בצע הזמנה!

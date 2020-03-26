@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const stripe = require('stripe')(process.env.stripeSecretKey);
+
 const PDFDocument = require('../util/pdfkit-tables');
 
 const Product = require('../models/product');
@@ -156,7 +158,51 @@ exports.getOrders = (req, res, _next) => {
     })
 };
 
-exports.postOrder = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
+    let products;
+    let totalPrice = 0;
+    req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+        products = user.cart.items;
+        totalPrice = 0;
+        products.forEach(p => {
+            totalPrice += p.quantity * p.productId.price;
+        });
+        return stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: products.map(p => {
+                return {
+                    name: p.productId.title,
+                    description: p.productId.description,
+                    amount: p.productId.price * 100,
+                    currency: 'USD',
+                    quantity: p.quantity
+                };
+            }),
+            success_url: `${req.protocol}://${req.get('host')}/checkout/success`,
+            cancel_url: `${req.protocol}://${req.get('host')}/checkout/cancel`,
+        })
+    })
+    .then(session => {
+        res.render('shop/checkout', {
+            title: 'תשלום',
+            products: products,
+            totalPrice: totalPrice,
+            currentPage:'checkout',
+            sessionId: session.id
+        })
+    })
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        error.iwMsg = 'תקלה בגישה לבסיס המידע!';
+        return next(error);
+    })
+}
+
+exports.getCheckoutSuccess = (req, res, next) => {
     req.user
     .populate('cart.items.productId')
     .execPopulate()

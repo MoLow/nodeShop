@@ -15,6 +15,10 @@ main {
     margin: auto;
 }
 
+hr {
+    margin: 3rem 0;
+}
+
 .centered {
     text-align: center;
 }
@@ -222,6 +226,7 @@ main {
 }
 
 .btn {
+    text-decoration: none;
     font: inherit;
     border: 1px solid #0846c2;
     color: #0846c2;

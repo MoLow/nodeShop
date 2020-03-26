@@ -1,5 +1,4 @@
 a.btn(href="/admin/edit-product/" + product._id + "?edit=true") ערוך
-form(action="/admin/delete-product", method="POST")
-    input(type="hidden", name="_csrf", value=csrfToken)
-    input(type="hidden", name="productId", value=product._id)
-    button.btn(type="submit") מחק
+input(type="hidden", name="_csrf", value=csrfToken)
+input(type="hidden", name="productId", value=product._id)
+button.btn.del(onclick="") מחק
