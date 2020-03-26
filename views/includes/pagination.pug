@@ -1,0 +1,14 @@
+section.pagination
+    if currPage !== 1 && prevPage !== 1
+        a(href="?p=1") 1
+    if hasPrevPage && prevPage > 2
+        a(class="more") ...
+    if hasPrevPage
+        a(href="?p=" + prevPage) #{prevPage}
+    a(href="?p=" + currPage class="active") #{currPage}
+    if hasNextPage
+        a(href="?p=" + nextPage) #{nextPage}
+    if hasNextPage && nextPage < lastPage - 1
+        a(class="more") ...
+    if currPage !== lastPage && nextPage !== lastPage
+        a(href="?p=" + lastPage) #{lastPage}

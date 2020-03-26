@@ -275,13 +275,19 @@ main {
     font-family: courier, monospace;
     padding: 10px;
     margin: 6px;
-    text-align: center;
+    text-align: left;
+    white-space: pre;
+    direction: ltr;
 }
 
 .pagination {
     margin-top: 2rem;
     text-align: center;
     direction: ltr;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 
 .pagination a {

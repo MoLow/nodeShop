@@ -10,8 +10,12 @@ if prods.length > 0
                     h2.product__price $#{product.price}
                     p.product__description #{product.description}
                 .card__actions
-                    a.btn(href="/products/" + product._id) פרטים
-                    include add-to-cart
+                    if admin
+                        include admin-product-actions
+                    else
+                        a.btn(href="/products/" + product._id) פרטים
+                        include add-to-cart
     block pagination
+        include pagination
 else   
     h1 אין מוצרים!
